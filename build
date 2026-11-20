@@ -169,6 +169,25 @@ RUN git remote add origin "${QEMU_REPO}"
 RUN_RETRY "${GIT_FETCH_RETRIES:-5}" git fetch --depth=1 origin "${QEMU_REF}"
 RUN git checkout --detach FETCH_HEAD
 
+RUN git apply <<EOF
+diff --git a/block/qcow2-threads.c b/block/qcow2-threads.c
+index d6071a1..d78eb8e 100644
+--- a/block/qcow2-threads.c
++++ b/block/qcow2-threads.c
+@@ -205,6 +205,11 @@ static ssize_t qcow2_zstd_compress(void *dest, size_t dest_size,
+     if (!cctx) {
+         return -EIO;
+     }
++
++    ZSTD_CCtx_setParameter(cctx, ZSTD_c_compressionLevel, 19);
++    ZSTD_CCtx_setParameter(cctx, ZSTD_c_strategy, ZSTD_btultra2);
++    ZSTD_CCtx_setParameter(cctx, ZSTD_c_enableLongDistanceMatching, 1);
++
+     /*
+      * Use the zstd streamed interface for symmetry with decompression,
+      * where streaming is essential since we don't record the exact
+EOF
+
 configure_args=(
     --prefix="/work/dst/${ARTIFACT_BASENAME}"
     --disable-debug-info

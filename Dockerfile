@@ -33,6 +33,7 @@ RUN apk add\
  linux-headers\
  glib-dev glib-static\
  zlib-dev zlib-static\
+ zstd-dev zstd-static\
  ncurses-dev ncurses-static\
  pcre2-dev pcre2-static\
  pixman-dev pixman-static\
